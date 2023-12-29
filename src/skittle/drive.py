@@ -12,6 +12,8 @@ import warnings
 import numpy as np
 import pandas as pd
 import pygsheets
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
 
 CSV_EXPORT_URL = ('https://docs.google.com/spreadsheets/d/{key}/gviz/'
@@ -29,7 +31,8 @@ def find_service_file(search='*service*.json'):
 
     matches = []
     for path in paths:
-        matches.extend(glob(os.path.join(path, search)))
+        search_ = os.path.join(path, search)
+        matches.extend(glob(search_))
     
     if len(matches) == 0:
         raise FileNotFoundError(f'no file matching {search}')
@@ -46,17 +49,9 @@ def read_csv_from_url(key, sheet_name, skiprows=0, **kwargs):
 class Drive():
     def __init__(self):
         SERVICE_FILE = find_service_file()
-    
         self.service = pygsheets.authorize(service_file=SERVICE_FILE)
 
-    def list_available_sheets(self):
-        query = "mimeType='application/vnd.google-apps.spreadsheet'"
-        response = self.service.files().list(q=query, fields='files(id, name)').execute()
 
-        sheets_dict = {file['name']: file['id'] for file in response.get('files', [])}
-        return sheets_dict
-
-        
     def get_excel(self, name, dropna='all', normalize=True, fix_int=True, 
                   drop_unnamed=True, header=True, skiprows=0, subheader=None):
         """
@@ -119,3 +114,19 @@ def normalize_col_name(s):
     except AttributeError: # not a string
         pass
     return s
+
+
+def list_available_sheets():
+    SERVICE_ACCOUNT_FILE = find_service_file()
+    SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+
+    credentials = service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    service = build('drive', 'v3', credentials=credentials)
+
+
+    query = "mimeType='application/vnd.google-apps.spreadsheet'"
+    response = service.files().list(q=query, fields='files(id, name)').execute()
+
+    sheets_dict = {file['name']: file['id'] for file in response.get('files', [])}
+    return sheets_dict

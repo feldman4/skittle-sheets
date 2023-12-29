@@ -224,19 +224,19 @@ def list_available_worksheets():
     """Print worksheets visible to the current service account.
     """
     import pygsheets
-    from .drive import Drive
-    drive = Drive()
-    return list(drive.list_available_sheets())
-
+    from .drive import list_available_sheets
+    return list(list_available_sheets())
 
 
 def main():
     # order is preserved
     commands = [
-        'export_sheet',
+        'export', 'list'
     ]
     # if the command name is different from the function name
     named = {
+        'export': export_sheet,
+        'list': list_available_worksheets,
         }
 
     final = {}
