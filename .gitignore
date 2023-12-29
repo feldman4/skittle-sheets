@@ -1,4 +1,6 @@
 .DS_Store
+src/keys.yaml
+src/wells.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -26,11 +26,14 @@ def extract_grids(xs):
     """
     grids = {}
     possible = np.ones(xs.shape, dtype=bool)
-    for i, row in enumerate(xs):
-        for j, x in enumerate(row):
-            if pd.isnull(x) or not valid_name(xs[i, j]):
-                continue
+    for i, row in enumerate(xs[:-1]):
+        for j, _ in enumerate(row):
             if not possible[i, j]:
+                continue
+            label_is_empty = pd.isnull(xs[i, j])
+            cell_below_is_empty = pd.isnull(xs[i+1, j])
+            name_is_valid = valid_name(xs[i, j])
+            if label_is_empty or not cell_below_is_empty or not name_is_valid:
                 continue
             grid = extract_grid(xs, i, j)
             if grid is not None:
@@ -198,8 +201,22 @@ def parse_skittle_sheet(uri):
     X[X == ''] = None
     grids = extract_grids(X[:, 3:])
     keys, maps = extract_maps(X[:, :3])
+    maps = validate_grids_and_maps(grids, maps)
     df_long = build_table(grids, maps)
     return keys, df_long
+
+
+def validate_grids_and_maps(grids, maps):
+    """Check that maps exist for all grids, and return maps
+    that are in use.
+    """
+    maps = maps.copy()
+    grid_names = set([x.split(';')[0] for x in grids])
+    if x := grid_names - set(maps):
+        raise ValueError(f'Grids missing variable definitions: {x}\nVariables are: {maps}')
+    if x := set(maps) - grid_names:
+        [maps.pop(y) for y in x]
+    return maps
 
 
 def export_sheet(name, output_prefix=''):
@@ -212,7 +229,14 @@ def export_sheet(name, output_prefix=''):
     keys, df_long = parse_skittle_sheet(name)
     f = output_prefix + 'wells.csv'
     df_long.to_csv(f, index=None)
-    print(f'Wrote info for {len(df_long)} wells to {f}')
+    names = ', '.join([x for x in df_long if x not in ('plate', 'well')])
+
+    plate_info = ''
+    if 'plate' in df_long:
+        plate_names = ', '.join(sorted(set(df_long['plate'])))
+        plate_info = f'; plates: {plate_names}'
+        
+    print(f'Wrote info for {len(df_long)} wells to {f} (variables: {names}{plate_info})')
 
     f = output_prefix + 'keys.yaml'
     with open(f, 'w') as fh:
