@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from .drive import Drive, read_csv_from_url
+
 PLATE = 'plate'
 
 
@@ -13,7 +15,6 @@ def load_raw(uri):
     """Load raw spreadsheet values.
     """
     if uri.startswith('drive:'):
-        from .drive import Drive
         drive = Drive()
         name = uri[len('drive:'):]
         return drive.get_excel(name, dropna=False, drop_unnamed=False, header=False)
@@ -127,9 +128,9 @@ def extract_maps(xs):
     C = is_numeric(xs[:, 2])
 
     encoded = ''.join([str(x) for x in A + 2*B + 4*C]) + '0'
-
+ 
     maps = {}
-    pat = '(076*)(?=0)'
+    pat = '([036]76*)(?=0)'
     for match in re.finditer(pat, encoded):
         name = xs[match.start() + 1, 0]
         labels = xs[match.start() + 1:match.end(), 1]
@@ -196,8 +197,15 @@ def load_from_drive_example():
     return keys, df_long
 
 
-def parse_skittle_sheet(uri):
-    df_raw = load_raw(uri)
+def parse_skittle_sheet(locator, method):
+    if method == 'drive_private':
+        df_raw = load_raw(f'drive:{locator}')
+    if method == 'csv':
+        df_raw = pd.read_csv(locator, header=None)
+    if method == 'drive_public':
+        key, gid = locator
+        df_raw = read_csv_from_url(key, gid=gid, header=None)
+
     X = df_raw.values.copy()
     X[X == ''] = None
     grids = extract_grids(X[:, 3:])
@@ -227,10 +235,19 @@ def export_sheet(name, output_prefix=''):
         "<spreadsheet>/<worksheet>" or "<worksheet>.csv"
     :param output_prefix: prefix for csv and yaml output
     """
-    if not os.path.exists(name) and not name.startswith('drive:'):
-        name = f'drive:{name}'
+    if name.startswith('drive:'):
+        locator, method = name[6:], 'drive_private'
+    elif extract_url(name):
+        locator, method = extract_url(name)[0], 'drive_public'
+    elif not os.path.exists(name):
+        # default option
+        locator, method = name, 'drive_private'
+    elif os.path.exists(name):
+        locator, method = name, 'csv'
+    else:
+        raise ValueError(f'Sheet name not found or not recognized: {name}')
 
-    keys, df_long = parse_skittle_sheet(name)
+    keys, df_long = parse_skittle_sheet(locator, method)
     f = output_prefix + 'wells.csv'
     df_long.to_csv(f, index=None)
     names = ', '.join([x for x in df_long if x not in ('plate', 'well')])
@@ -254,6 +271,11 @@ def list_available_worksheets():
     import pygsheets
     from .drive import list_available_sheets
     return list(list_available_sheets())
+
+
+def extract_url(url):
+    pat = '.*\/(.*)\/edit#gid=(\d+)'
+    return re.findall(pat, url)
 
 
 def main():

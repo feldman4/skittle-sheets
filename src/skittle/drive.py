@@ -16,10 +16,6 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
 
-CSV_EXPORT_URL = ('https://docs.google.com/spreadsheets/d/{key}/gviz/'
-                  'tq?tqx=out:csv&sheet={sheet_name}')
-
-
 def find_service_file(search='*service*.json'):
     """Searches current path, then parent directories, then user home.
     """
@@ -40,10 +36,24 @@ def find_service_file(search='*service*.json'):
     return matches[0]
 
 
-def read_csv_from_url(key, sheet_name, skiprows=0, **kwargs):
-    url = CSV_EXPORT_URL.format(key=key, sheet_name=sheet_name)
-    df = pd.read_csv(url, skiprows=skiprows)
-    return Drive.clean(df, **kwargs)
+def read_csv_from_url(key, sheet_name=None, gid=None, skiprows=0, 
+        header=1, clean=False, **kwargs):
+    """Provide the document key and either the sheet name or gid.
+    """
+    if sheet_name is not None:
+        url = (f'https://docs.google.com/spreadsheets/d/{key}/gviz/'
+               f'tq?tqx=out:csv&sheet={sheet_name}')
+    elif gid is not None:
+        url = (f'https://docs.google.com/spreadsheets/d/{key}/gviz/'
+               f'tq?tqx=out:csv&gid={gid}')
+    else:
+        raise ValueError('Must provide either `sheet_name` or `gid`')
+
+    df = pd.read_csv(url, skiprows=skiprows, header=header)
+
+    if clean:
+        Drive.clean(df, **kwargs)
+    return df
 
 
 class Drive():
