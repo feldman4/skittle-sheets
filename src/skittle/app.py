@@ -1,5 +1,6 @@
 import re
 
+import os
 import fire
 import numpy as np
 import pandas as pd
@@ -223,9 +224,12 @@ def export_sheet(name, output_prefix=''):
     """Export a sheet (local or on google drive).
 
     :param name: path to sheet, can be local or remote, e.g., 
-        "drive:<spreadsheet>/<worksheet>" or "<worksheet>.csv"
+        "<spreadsheet>/<worksheet>" or "<worksheet>.csv"
     :param output_prefix: prefix for csv and yaml output
     """
+    if not os.path.exists(name) and not name.startswith('drive:'):
+        name = f'drive:{name}'
+
     keys, df_long = parse_skittle_sheet(name)
     f = output_prefix + 'wells.csv'
     df_long.to_csv(f, index=None)
