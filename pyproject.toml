@@ -1,6 +1,6 @@
 [project]
 name = "skittle-sheets"
-version = "0.0.2"
+version = "0.0.3"
 description = "Lightweight design of plate-based experiments"
 authors = [
   { name="David Feldman" },
