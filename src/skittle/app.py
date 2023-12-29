@@ -82,14 +82,14 @@ def pivot_grid(name, df_grid):
     """
     name = str(name).strip()
     terms = str(name).split(';')
-    df_long = df_grid.stack().rename(terms[0]).reset_index()
+    df_long = df_grid.stack(dropna=False).rename(terms[0]).reset_index()
     if len(terms) == 2:
         arr = []
         plate_string = terms[1].replace(PLATE, '').strip()
         for plate in plate_string.split(','):
             plate = plate.strip()
             arr += [df_long.assign(**{PLATE: plate})]
-        df_long = pd.concat(arr)    
+        df_long = pd.concat(arr)
 
     return df_long
 
