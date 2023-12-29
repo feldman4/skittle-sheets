@@ -14,12 +14,13 @@ Place it in the working directory, a parent directory, or your home directory. M
 Share your Google Sheets document with the service account generated above (read-only is fine). Then run:
 
 ```bash
-skittle export "drive:<spreadsheet>/<worksheet>
-``` 
+skittle export "<spreadsheet>/<worksheet>"
+```
+
+If the Drive and Sheets APIs are not already enabled, there will be an error message with a link prompting you to enable them.
 
 # Usage (local)
 
 ```bash
 skittle export test.csv
-skittle export test.xlsx
 ```
