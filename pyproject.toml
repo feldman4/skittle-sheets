@@ -19,12 +19,12 @@ classifiers = [
 
 dependencies = [
   "fire",
-  "pandas",
-  "pyyaml",
-  "pygsheets",
   "google-api-python-client",
   "google-auth-httplib2",
   "google-auth-oauthlib",
+  "pandas",
+  "pygsheets",
+  "pyyaml",
 ]
 
 [build-system]
