@@ -1,0 +1,9 @@
+name: skittle
+channels:
+  - conda-forge
+dependencies:
+  - fire
+  - pandas
+  - pyyaml
+  - pip:
+    - pygsheets
