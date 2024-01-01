@@ -20,7 +20,7 @@ There are three meaningful blocks that are automatically extracted from the layo
 2. Variable definitions. Each must be an Oklahoma-shaped region in the first three columns (variable name, value, and code).
 3. Grids mapping variables onto plates. The grid can be anywhere, but the spacing between variable name and row/column labels is important. Fill out the plate with codes (empty cells are OK). Plates labels can be listed after a semicolon (a grid with no plate label applies to all plates).
 
-Here are (some examples)[https://docs.google.com/spreadsheets/d/1UVDRgs1w6fySZqJqEbEH1v7m1i0qhhpQ_r9Y59TZ8tU/edit#gid=968744084]:
+Here are [some examples](https://docs.google.com/spreadsheets/d/1UVDRgs1w6fySZqJqEbEH1v7m1i0qhhpQ_r9Y59TZ8tU/edit#gid=968744084):
 
 ```bash
 # example A
