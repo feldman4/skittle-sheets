@@ -51,7 +51,7 @@ skittle export "<spreadsheet>/<worksheet>"
 
 If the Drive and Sheets APIs are not already enabled, there will be an error message with a link prompting you to enable them.
 
-## Local `.csv` file
+## Local
 
 ```bash
 skittle export layout.csv
