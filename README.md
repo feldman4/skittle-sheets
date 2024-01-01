@@ -11,7 +11,7 @@ Place the JSON key file in the working directory, a parent directory, your home 
 
 # Format and examples
 
-<img src="docs/example_B.png" alt="layout and longform output" width="400"/>
+<img src="docs/example_B.png" alt="layout and longform output" width="600"/>
 
 
 There are three meaningful blocks that are automatically extracted from the layout based on location. Any other content is ignored, so it's OK to put notes wherever you like.
