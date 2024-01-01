@@ -22,8 +22,10 @@ def find_service_file(search='*service*.json'):
     parent_paths = [os.getcwd()] + [str(x) for x in Path(os.getcwd()).parents]
     special_paths = [
         os.environ['HOME'], 
+        os.path.join(os.environ['HOME'], '.config'),
         ]
     paths = parent_paths + special_paths
+    print(paths)
 
     matches = []
     for path in paths:
