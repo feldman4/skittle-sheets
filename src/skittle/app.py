@@ -123,20 +123,23 @@ def is_numeric(x):
 
 def extract_maps(xs):
     """Extract named maps from first three columns of `xs`.
+    Allow maps without spacing in-between (needed to process 
+    .csv downloaded from public Google Sheets).
     """
     A, B = ~(pd.isnull(xs[:, :2]).T)
     C = is_numeric(xs[:, 2])
 
     encoded = ''.join([str(x) for x in A + 2*B + 4*C]) + '0'
- 
+
     maps = {}
-    pat = '([036]76*)(?=0)'
-    for match in re.finditer(pat, encoded):
-        name = xs[match.start() + 1, 0]
-        labels = xs[match.start() + 1:match.end(), 1]
-        values = xs[match.start() + 1:match.end(), 2]
+    for match in re.finditer('76+', encoded):
+        start = match.start()
+        end = match.end()
+        name = xs[start, 0]
+        labels = xs[start:end, 1]
+        values = xs[start:end, 2]
         maps[name] = dict(zip(values, labels))
-        
+    
     keys = {}
     match = re.match('^(3+)', encoded)
     if match:
