@@ -1,4 +1,4 @@
-**skittle-sheets** lets you describe plate-based experiments in a spreadsheet format that's human- and machine-readable. It integrates with Google Sheets for collaborative design-of-experiment.
+The skittle sheet is a human- and machine-friendly format for designing plate-based experiments. This package exports skittle sheets from Google Sheets or local files to "long-form" tables for easy downstream use (e.g., notebook analysis or input to a database).
 
 # Format and examples
 
