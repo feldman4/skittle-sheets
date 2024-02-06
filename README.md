@@ -1,18 +1,8 @@
-# Install
-
-```bash
-pip install skittle-sheets
-```
-
-To access private Google Sheets, generate a service account and JSON key file following
-https://cloud.google.com/iam/docs/creating-managing-service-account-keys
-
-Place the JSON key file in the working directory, a parent directory, your home directory, or `~/config/skittle`. Make sure the filename matches `*service*.json` (e.g,. move it to `~/config/.skittle_service.json`).
+**skittle-sheets** lets you describe plate-based experiments in a spreadsheet format that's human- and machine-readable. It integrates with Google Sheets for collaborative design-of-experiment.
 
 # Format and examples
 
 <img src="docs/example_B.png" alt="layout and longform output" width="600"/>
-
 
 There are three meaningful blocks that are automatically extracted from the layout based on location. Any other content is ignored, so it's OK to put notes wherever you like.
 
@@ -56,3 +46,14 @@ If the Drive and Sheets APIs are not already enabled, there will be an error mes
 ```bash
 skittle export layout.csv
 ```
+
+# Installation
+
+```bash
+pip install skittle-sheets
+```
+
+To access private Google Sheets, generate a service account and JSON key file following
+https://cloud.google.com/iam/docs/creating-managing-service-account-keys
+
+Place the JSON key file in the working directory, a parent directory, your home directory, or `~/config/skittle`. Make sure the filename matches `*service*.json` (e.g,. move it to `~/config/.skittle_service.json`).
