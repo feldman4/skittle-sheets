@@ -33,7 +33,7 @@ skittle export <URL>
 
 ## Private Google Sheets
 
-Share your Google Sheets document with the service account generated above (read-only is fine). Then run:
+Share your Google Sheets document with the service account generated in installation (read-only is fine). Then run:
 
 ```bash
 skittle export "<spreadsheet>/<worksheet>"
